@@ -1,5 +1,6 @@
 ﻿using AngleSharp;
 using AngleSharp.Dom;
+using MetanitCSharpParserUWP.Core;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,38 +17,65 @@ namespace MetanitCSharpParserUWP
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        MetanitParser parser;
+
+
         public MainPage()
         {
             this.InitializeComponent();
+
+            parser = new MetanitParser(Books.CSharpBasics);
+
+            folders.SelectionChanged += new SelectionChangedEventHandler(FolderSelected);
+            files.SelectionChanged += new SelectionChangedEventHandler(LessonSelected);
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void LessonSelected(object sender, SelectionChangedEventArgs e)
         {
-            // Setup the configuration to support document loading
-            var config = Configuration.Default.WithDefaultLoader();
+            var lessons = parser.GetHref(files.SelectedValue.ToString());
+            string href = "";
+            foreach(var lesson in lessons)
+                href = "http://"+lesson;
 
-            // Load the names of all The Big Bang Theory episodes from Wikipedia
-            var address = "https://metanit.com/sharp/mvc5/1.1.php";
-            // Asynchronously get the document in a new context using the configuration
-            var document = await BrowsingContext.New(config).OpenAsync(address);
+            var content = parser.GetPageContent(href);
+            foreach (var a in content)
+                output.Items.Add(a);
+        }
 
+
+
+        // open Lessons panel
+        private void FolderSelected(object sender, SelectionChangedEventArgs e)
+        {
+            if (folders.SelectedIndex < 0) 
+                return;
+
+            splitView.IsPaneOpen = !splitView.IsPaneOpen;
+            splitView2.IsPaneOpen = !splitView.IsPaneOpen;
 
             // Perform the query to get all cells with the content
-            //var menuItems = document.QuerySelectorAll("span").Where(m => m.ClassName.Contains("folder"));
-            IEnumerable<IElement> menuItems = from item in document.QuerySelectorAll("span")
-                            where item.ClassName.Contains("folder")
-                            select item;
+            List<string> lessons = parser.GetLessons(folders.SelectedIndex);
 
-            // We are only interested in the text - select it with LINQ
-            var titles = menuItems.Select(m => m.TextContent).ToList();
-
-            foreach (var item in titles)
-                folders.Items.Add(item);
+            //files - listview
+            files.Items.Clear();
+            foreach (var item in lessons)
+                files.Items.Add(item);
         }
 
+        // open Folders panel
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            // Perform the query to get all cells with the content
+            List<string> chapters = parser.GetChapters();
 
-        // open SplitView panel
-        private void Button_Click(object sender, RoutedEventArgs e) => 
+            //folders - listview
+            folders.Items.Clear();
+            foreach (var item in chapters)
+                folders.Items.Add(item);
+
+
             splitView.IsPaneOpen = !splitView.IsPaneOpen;
+        }
+
     }
 }
