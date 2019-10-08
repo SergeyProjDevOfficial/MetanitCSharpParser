@@ -32,7 +32,7 @@
       Executable="$targetnametoken$.exe"
       EntryPoint="MetanitCSharpParserUWP.App">
       <uap:VisualElements
-        DisplayName="MetanitCSharpParserUWP"
+        DisplayName="Metanit C#"
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         Description="MetanitCSharpParserUWP"

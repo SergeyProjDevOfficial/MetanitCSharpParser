@@ -6,9 +6,45 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    Loaded="Page_Loaded">
 
     <Grid>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width=".5*" x:Name="listContainer"/>
+            <ColumnDefinition Width=".5*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="1*"/>
+        </Grid.RowDefinitions>
+
+        <SplitView x:Name="splitView" PaneBackground="LightBlue" Grid.Column="0" Grid.Row="1" OpenPaneLength="{Binding ElementName=listContainer, Path=ActualWidth}" >
+
+            <SplitView.Pane>
+
+
+                <RelativePanel>
+
+                    <ListBox x:Name="folders"  VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollMode="Enabled"/>
+
+                </RelativePanel>
+
+
+            </SplitView.Pane>
+
+
+            <SplitView.Content>
+                <Grid>
+                    <ListView x:Name="Output" HorizontalAlignment="Stretch" VerticalContentAlignment="Stretch" />
+
+                </Grid>
+            </SplitView.Content>
+        </SplitView>
+
+
+        <Button Content="Оглавление" FontSize="25" Background="HotPink" VerticalAlignment="Stretch" Click="Button_Click" Grid.Row="0" HorizontalAlignment="Left" />
 
     </Grid>
 </Page>
