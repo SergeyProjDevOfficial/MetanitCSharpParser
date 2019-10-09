@@ -10,32 +10,25 @@ namespace MetanitCSharpParserUWP.Core
 {
     class MetanitParser : Books
     {
-        //book section
-        private string prefix { get; set; } 
-        
-        private IDocument document { get; set; }
-
-
-        public MetanitParser(string prefix)
+        // link == MainPage + prefix
+        private async Task<IDocument> GetDocument(string link)
         {
-            Create();
+            // Setup the configuration to support document loading
+            IConfiguration config = Configuration.Default.WithDefaultLoader();
 
-            async void Create()
-            {
-                // Setup the configuration to support document loading
-                IConfiguration config = Configuration.Default.WithDefaultLoader();
-
-                // Asynchronously get the document in a new context using the configuration
-                document = await BrowsingContext.New(config).OpenAsync(MainPage + prefix);
-            }
+            // Asynchronously get the document in a new context using the configuration
+            return await BrowsingContext.New(config).OpenAsync(link);
         }
-        
 
 
-        public List<string> GetChapters() //глава
+        // глава
+        public async Task<List<string>> GetChapters(string prefix) 
         {
+            var document = await GetDocument(MainPage + prefix);
+
             var items =
-                
+
+                //query
                 from item in document.QuerySelectorAll("span")
                 where item.ClassName.Contains("folder")
                 select item;
@@ -44,9 +37,11 @@ namespace MetanitCSharpParserUWP.Core
         }
 
 
-
-        public List<string> GetLessons(int index) //урок
+        // урок
+        public async Task<List<string>> GetLessons(string prefix, int index) 
         {
+            var document = await GetDocument(MainPage + prefix);
+
             var items =
 
                 from item in document.QuerySelectorAll("ol")
@@ -58,36 +53,48 @@ namespace MetanitCSharpParserUWP.Core
 
             List<string> results = new List<string>();
 
-            foreach (var str in strings)
-                try { 
-                    results.Add(str.Remove(0, 3));
-                }
-                catch { }
+            foreach (string str in strings)
+            {
+                if (str.Any(x => !char.IsLetter(x)))
+                    results.Add(str);
+            }
 
             return results;
         }
 
 
-        public List<string> GetHref(string text)
+        // ссылка ( <a href="?">текст</a>)
+        public string GetHref(string prefix, string text) 
         {
+            IDocument document = Task.Run(async () => await GetDocument(MainPage + prefix)).Result;
+
             var items =
 
                 from item in document.QuerySelectorAll("a")
-                where item.TextContent.Contains(text)
+                where item.TextContent.Contains(text.Trim())
                 select item.GetAttribute("href");
 
-            return items.ToList();
+            string href = "";
+            foreach (var item in items)
+                href = "http:" + item;
+
+            return href;
         }
 
 
-        public List<string> GetPageContent(string link) //Статья
+        // полный текст урока
+        public async Task<List<string>> GetPageContent(string link) 
         {
-            var items =
+            var document = await GetDocument(link);
 
-                from item in document.QuerySelectorAll("p")
-                select item;
+            var item =
 
-            return items.Select(m => m.TextContent).ToList();
+                //query for text
+                from i1 in document.QuerySelectorAll("p, div.container")
+                select i1;
+
+
+            return item.Select(m => m.TextContent).ToList();
         }
 
     }

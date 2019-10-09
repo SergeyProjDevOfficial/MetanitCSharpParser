@@ -13,16 +13,23 @@
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width=".3*" x:Name="listContainer" MinWidth="500"/>
             <ColumnDefinition Width=".6*"/>
-            <ColumnDefinition Width=".1*"/>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height=".3*"/>
-            <RowDefinition Height=".5*"/>
-            <RowDefinition Height=".2*"/>
+            <RowDefinition Height=".9*"/>
+            <RowDefinition Height=".1*"/>
         </Grid.RowDefinitions>
 
-
-        <SplitView x:Name="splitView" PaneBackground="LightBlue" Grid.Row="0" MinWidth="500" Grid.RowSpan="2" OpenPaneLength="{Binding ElementName=listContainer, Path=ActualWidth}" >
+        <TextBox Grid.ColumnSpan="2" Grid.Column="0" 
+            x:Name="output"
+            Height="Auto"
+            Width="Auto"
+            TextWrapping="Wrap"
+            AcceptsReturn="True"
+            FontSize="24"
+            ScrollViewer.VerticalScrollMode="Enabled"
+        />
+        
+        <SplitView x:Name="splitView" DisplayMode="Overlay" PaneBackground="LightBlue" Grid.Row="0" MinWidth="500" Grid.RowSpan="2" OpenPaneLength="{Binding ElementName=listContainer, Path=ActualWidth}" >
             <SplitView.Pane>
                 <RelativePanel>
                     <ListBox x:Name="folders" VerticalAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled"/>
@@ -30,7 +37,7 @@
             </SplitView.Pane>
         </SplitView>
 
-        <SplitView x:Name="splitView2" PaneBackground="LightBlue" Grid.Row="0" MinWidth="500" Grid.RowSpan="2" OpenPaneLength="{Binding ElementName=listContainer, Path=ActualWidth}" >
+        <SplitView x:Name="splitView2" DisplayMode="Overlay" PaneBackground="LightBlue" Grid.Row="0" MinWidth="500" Grid.RowSpan="2" OpenPaneLength="{Binding ElementName=listContainer, Path=ActualWidth}" >
             <SplitView.Pane>
                 <RelativePanel>
                     <ListBox x:Name="files" VerticalAlignment="Center" VerticalContentAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled"/>
@@ -38,11 +45,9 @@
             </SplitView.Pane>
         </SplitView>
 
-        <ListView x:Name="output" Grid.Row="0" Grid.RowSpan="3" Grid.Column="1" ScrollViewer.VerticalScrollMode="Enabled">
-            
-        </ListView>
-
-            <Button Content="Оглавление" FontSize="25" Background="HotPink" VerticalAlignment="Center" Click="Button_Click" Grid.Row="3" HorizontalAlignment="Left" />
+        
+        
+        <Button Content="Оглавление" FontSize="25" Background="HotPink" VerticalAlignment="Center" Click="Button_Click" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" />
         
     </Grid>
 </Page>

@@ -10,20 +10,17 @@ namespace MetanitCSharpParserUWP.Core
     {
         protected string MainPage { get => "https://metanit.com"; }
 
-        #region CSharp
+        public class CSharp
+        {
+            private static string BaseName = "/sharp/";
 
-        private static string BaseName = "/sharp/";
-
-        public static string CSharpBasics     { get => BaseName + "tutorial"; }
-        public static string CSharpPatterns   { get => BaseName + "patterns"; }
-        public static string CSharpNet        { get => BaseName + "net"; }
-        public static string CSharpAlgoritms  { get => BaseName + "algoritm"; }
-        public static string CSharpASP        { get => BaseName + "aspnet5"; }
-        public static string CSharpAspMvc     { get => BaseName + "mvc5"; }
-        public static string CSharpAspNetCore { get => BaseName + "aspnetcore"; }
-
-        #endregion
-
-
+            public static string Basics     { get => BaseName + "tutorial"; }
+            public static string Patterns   { get => BaseName + "patterns"; }
+            public static string Net        { get => BaseName + "net"; }
+            public static string Algoritms  { get => BaseName + "algoritm"; }
+            public static string ASP        { get => BaseName + "aspnet5"; }
+            public static string AspMvc     { get => BaseName + "mvc5"; }
+            public static string AspNetCore { get => BaseName + "aspnetcore"; }
+        }
     }
 }

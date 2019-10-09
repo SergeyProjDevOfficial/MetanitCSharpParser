@@ -18,34 +18,42 @@ namespace MetanitCSharpParserUWP
     public sealed partial class MainPage : Page
     {
         MetanitParser parser;
+        string prefix = Books.CSharp.Basics;
 
 
         public MainPage()
         {
             this.InitializeComponent();
 
-            parser = new MetanitParser(Books.CSharpBasics);
+            parser = new MetanitParser();
 
             folders.SelectionChanged += new SelectionChangedEventHandler(FolderSelected);
             files.SelectionChanged += new SelectionChangedEventHandler(LessonSelected);
         }
 
-        private void LessonSelected(object sender, SelectionChangedEventArgs e)
-        {
-            var lessons = parser.GetHref(files.SelectedValue.ToString());
-            string href = "";
-            foreach(var lesson in lessons)
-                href = "http://"+lesson;
 
-            var content = parser.GetPageContent(href);
-            foreach (var a in content)
-                output.Items.Add(a);
+        // on current lesson selected => load this lesson
+        private async void LessonSelected(object sender, SelectionChangedEventArgs e)
+        {
+            if (files.SelectedIndex < 0)
+                return;
+
+            string href = parser.GetHref(prefix, files.SelectedValue.ToString());
+
+            var text = await parser.GetPageContent(href);
+
+            output.Text = href;
+            foreach (var a in text)
+                output.Text += a+"\n";
+
+
+            splitView2.IsPaneOpen = !splitView2.IsPaneOpen;
         }
 
 
 
-        // open Lessons panel
-        private void FolderSelected(object sender, SelectionChangedEventArgs e)
+        // on folder selected => show available lessons
+        private async void FolderSelected(object sender, SelectionChangedEventArgs e)
         {
             if (folders.SelectedIndex < 0) 
                 return;
@@ -54,25 +62,26 @@ namespace MetanitCSharpParserUWP
             splitView2.IsPaneOpen = !splitView.IsPaneOpen;
 
             // Perform the query to get all cells with the content
-            List<string> lessons = parser.GetLessons(folders.SelectedIndex);
+            List<string> lessons = await parser.GetLessons(prefix, folders.SelectedIndex);
 
-            //files - listview
+            // files - listview
             files.Items.Clear();
             foreach (var item in lessons)
                 files.Items.Add(item);
         }
 
-        // open Folders panel
-        private void Button_Click(object sender, RoutedEventArgs e)
+
+
+        // on button ShowFoldersClick => show available folders
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             // Perform the query to get all cells with the content
-            List<string> chapters = parser.GetChapters();
+            List<string> chapters = await parser.GetChapters(prefix);
 
             //folders - listview
             folders.Items.Clear();
             foreach (var item in chapters)
                 folders.Items.Add(item);
-
 
             splitView.IsPaneOpen = !splitView.IsPaneOpen;
         }
